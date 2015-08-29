@@ -46,7 +46,7 @@ def cli():
                 print("Thats's not even a number!")
                 cli()
         
-        if menuOption in range(0,5):
+        if menuOption in range(0,6):
                 menuOption=str(menuOption)
                 if menuOption == "0":
                         print("\nThis is \"Big Rod's Pizza\" ordering app")
@@ -63,6 +63,7 @@ def cli():
                         print("The rest is  only avaliable in one size")
                 elif menuOption == "1":
                         print_prompt()
+                        cli()
                 elif menuOption == "2":
                         order()
                 elif menuOption == "3":
@@ -75,7 +76,7 @@ def cli():
                         print("Error, please check the cli menu")
                 cli()
         else:
-                print("There is no option {}...".format(menu))
+                print("There is no option {}...".format(menuOption))
                 cli()
 
 def print_prompt():
@@ -101,10 +102,8 @@ def print_prompt():
                 else:
                         print_menu(area-1)
                 
-                # Redirects back to cli
-                cli()
         else:
-                print("There is no submenu section {}...".format(printArea))
+                print("There is no submenu section {}...".format(area))
                 print_prompt()
 
 def print_menu(menuIndex):
