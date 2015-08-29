@@ -51,12 +51,16 @@ def cli():
                 if menuOption == "0":
                         print("\nThis is \"Big Rod's Pizza\" ordering app")
                         print("It's made for python 3.X")
-                        print("Type in 1 to see the menu")
-                        print("Then 2 to start ordering")
-                        print("Then 3 to check your order")
-                        print("If it's wrong you can type in 2 to change it")
-                        print("Then type in 4 to print your order and check out")
-                        print("To track your order type in 5")
+                        print("The pizzas are made fresh in:")
+                        print("Small   -  9 Inches")
+                        print("Medium  - 11 Inches")
+                        print("Large   - 13 Inches")
+                        print("Monster - 15 Inches")
+                        print("\nAnd the drinks are avalaiable in:")
+                        print("Cans    - 330ml")
+                        print("Bottles - 500ml")
+                        print("2Liters - 2000ml")
+                        print("The rest is  only avaliable in one size")
                 elif menuOption == "1":
                         print_prompt()
                 elif menuOption == "2":
@@ -112,7 +116,7 @@ def print_menu(menuIndex):
                 banner(menuIndex)
                 for item in range(0,len(menu[menuIndex])):
                         print(menu[menuIndex][item][0])
-                        print("    >{}".format(menu[menuIndex][item][1])) # Description for the item
+                        print("{:>5}>{}".format("",menu[menuIndex][item][1])) # Description for the item
                         print("         Price:",currency(menu[menuIndex][item][2]))
 
         elif menuIndexStr == "1":
@@ -121,11 +125,11 @@ def print_menu(menuIndex):
                         print("menuIndex is {} and It should be printing out ONLY pizzas".format(menuIndex))
                 for item in range(0,len(menu[menuIndex])):
                         print(menu[menuIndex][item][0])
-                        print("    >{}".format(menu[menuIndex][item][1]))
-                        print("         Small: "+currency(menu[menuIndex][item][2]))
-                        print("        Medium: "+currency(menu[menuIndex][item][3]))
-                        print("         Large: "+currency(menu[menuIndex][item][4]))
-                        print("       Monster: "+currency(menu[menuIndex][item][5]))
+                        print("{:>5}>{}".format("",menu[menuIndex][item][1]))
+                        print("{:>20}: {:>6}".format("Small",currency(menu[menuIndex][item][2])))
+                        print("{:>20}: {:>6}".format("Medium",currency(menu[menuIndex][item][3])))
+                        print("{:>20}: {:>6}".format("Large",currency(menu[menuIndex][item][4])))
+                        print("{:>20}: {:>6}".format("Monster",currency(menu[menuIndex][item][5])))
 
         elif menuIndexStr == "2":
                 banner(menuIndex)
@@ -133,10 +137,10 @@ def print_menu(menuIndex):
                         print("menuIndex is {} and It should be printing out ONLY drinks".format(menuIndex))
                 for item in range(0,len(menu[menuIndex])):
                         print(menu[menuIndex][item][0])
-                        print("    >{}".format(menu[menuIndex][item][1]))
-                        print("         Cans: "+currency(menu[menuIndex][item][2]))
-                        print("      Bottels: "+currency(menu[menuIndex][item][3]))
-                        print("      2Liters: "+currency(menu[menuIndex][item][4]))
+                        print("{:>5}>{}".format("",menu[menuIndex][item][1]))
+                        print("{:>20}: {:>6}".format("Cans",currency(menu[menuIndex][item][2])))
+                        print("{:>20}: {:>6}".format("Bottles",currency(menu[menuIndex][item][3])))
+                        print("{:>20}: {:>6}".format("2Liters",currency(menu[menuIndex][item][4])))
 
         else:
                 print("This should have never happened!\nCheck function \"print_menu()\"")
