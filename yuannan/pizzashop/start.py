@@ -7,7 +7,6 @@ import time
 #debug=True
 cliPrompt=True
 
-
 # Defining all the functions
 
 def start():
@@ -24,6 +23,7 @@ def import_files():
         for i in range(0,len(submenus)):
                 for item in csv.reader(open("etc/"+submenus[i]+".csv")):
                         menu[i].append(item)
+
 def cli():
         global cliPrompt
         if cliPrompt:
@@ -37,7 +37,7 @@ def cli():
         print("1) Print Menu")
         print("2) Start Ordering/Change your order")
         print("3) Check Order")
-        print("4) Print and Checkout")
+        print("4) Checkout and Print")
         print("5) Check on the meal")
         menuTemp=input("")
         try:
@@ -49,21 +49,9 @@ def cli():
         if menuOption in range(0,6):
                 menuOption=str(menuOption)
                 if menuOption == "0":
-                        print("\nThis is \"Big Rod's Pizza\" ordering app")
-                        print("It's made for python 3.X")
-                        print("The pizzas are made fresh in:")
-                        print("Small   -  9 Inches")
-                        print("Medium  - 11 Inches")
-                        print("Large   - 13 Inches")
-                        print("Monster - 15 Inches")
-                        print("\nAnd the drinks are avalaiable in:")
-                        print("Cans    - 330ml")
-                        print("Bottles - 500ml")
-                        print("2Liters - 2000ml")
-                        print("The rest is  only avaliable in one size")
+                        print_help()
                 elif menuOption == "1":
                         print_prompt()
-                        cli()
                 elif menuOption == "2":
                         order()
                 elif menuOption == "3":
@@ -74,10 +62,23 @@ def cli():
                         checkMeal()
                 else:
                         print("Error, please check the cli menu")
-                cli()
         else:
                 print("There is no option {}...".format(menuOption))
-                cli()
+        cli()
+
+def print_help():
+        print("\nThis is \"Big Rod's Pizza\" ordering app")
+        print("It's made for python 3.X")
+        print("The pizzas are made fresh in:")
+        print("Small   -  9 Inches")
+        print("Medium  - 11 Inches")
+        print("Large   - 13 Inches")
+        print("Monster - 15 Inches")
+        print("\nAnd the drinks are avalaiable in:")
+        print("Cans    - 330ml")
+        print("Bottles - 500ml")
+        print("2Liters - 2000ml")
+        print("The rest is  only avaliable in one size")
 
 def print_prompt():
         print("\n\n\nWhat do you want print?\n")
@@ -159,7 +160,7 @@ def banner(subMenu):
         else:
                 print("ERROR!!! Check the function \"print_menu()\" line 3+")
         print("==============================\n")
-        
+
 def currency(money):
         money=str(money) # Converts to a string for later handeling
         whole=money[:-2]
@@ -170,12 +171,52 @@ def currency(money):
                 units="0"+units
         return("£"+whole+"."+units)
 
+def order():
+        print("What would you like to order?")
+        print("1) Starters")
+        print("2) Pizzas")
+        print("3) Drinks")
+        print("4) Desserts")
+        print("5) Extras")
+        print("8) Print menu")
+        print("9) Remove an item")
+        print("0) Return")
+        menuTemp = input("")
+        
+        print(type(menuTemp))
+        try:
+                menuOption=int(menuTemp)
+        except ValueError:
+                print("That's not even a number!")
+                order()
+        print(type(menuTemp))
+        print(type(menuOption))
+        if menuOption in range(1,5) or menuOption in range(8,10) or menuOption == "0":
+                menuOption=str(menuOption)
+                if menuOption == "0":
+                        cli()
+                elif menuOption == "9":
+                        removeItem()
+                elif menuOption == "8":
+                        print_prompt()
+                elif menuOption == "1" or menuOption == "4" or menuOption == "5":
+                        orderBasics(menuOption)
+                elif menuOption == "2":
+                        orderPizza()
+                elif menuOption == "3":
+                        orderDrinks()
+                else:
+                        print("Error, this should not have happened, Error in function \"order()\"")
+        else:
+                print("There is no option {}...".format(menuOption))
+        order()
+
 def dev_menu():
         # Print out the menu in pure python "list" or array form
         for i in range(0,len(menu)):
                 print("\n")
                 for b in menu[i]:
                         print(b)
-                        
-import_files()
+
+#Starts the "start" function and actully  boots the program
 start()
