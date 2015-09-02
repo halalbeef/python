@@ -203,13 +203,15 @@ def order():
                 elif menuOption == "9":
                         removeItem()
                 elif menuOption == "8":
+                        print_Order()
+                elif menuOption == "7":
                         print_prompt()
                 elif menuOption == "1" or menuOption == "4" or menuOption == "5":
                         orderBasics(menuOption)
                 elif menuOption == "2":
-                        orderPizza()
+                        orderPizzas(menuOption)
                 elif menuOption == "3":
-                        orderDrinks()
+                        orderDrinks(menuOption)
                 else:
                         print("Error, this should not have happened, Error in function \"order()\"")
         else:
@@ -221,9 +223,10 @@ def orderBasics(menuOption):
         menuOption=int(menuOption)
         orderError=False
         print("\n")
+        print("{:<5}{:<50}{}".format("#Num","Item Name","Price"))
+        print("="*60)
         for item in range(len(menu[menuOption-1])):
-                formatSpaces=50-len(menu[menuOption-1][item][0])
-                print("{0}){1}{2:50}{3}".format(item+1," "*(3-len(str(item+1))),menu[menuOption-1][item][0],currency(menu[menuOption-1][item][2])))
+                print("{:<5}{:<50}{}".format(str(item+1)+")",menu[menuOption-1][item][0],currency(menu[menuOption-1][item][2])))
         currentItemTemp=input("\nItem number: ")
         try:
                 currentItem=int(currentItemTemp)-1
@@ -231,7 +234,7 @@ def orderBasics(menuOption):
                 orderError="Item not a number"
         if currentItem < 0:
                 orderError = "Item number less than 1"
-        elif currentItem >= len(menu[menuOption]):
+        elif currentItem >= len(menu[menuOption-1]):
                 orderError="Item number higher total items"
         if orderError != False:
                 print("orderError: {}".format(orderError))
@@ -241,12 +244,85 @@ def orderBasics(menuOption):
                 if comment.lower() == "c":
                         print("Cancelling item...")
                 else:
-                        currentItemList =[[menuOption-1],[currentItem],[menu[menuOption-1][currentItem][2]],[comment]]
+                        currentItemList=[menuOption-1,currentItem,comment]
                         customerOrder.append(currentItemList)
                 if 'debug' in globals():
                         print(customerOrder)
-        
 
+def orderPizzas(menuOption):
+        # Ordering for Pizzas only, due to it's funky multi-sized formatting
+        menuOption=int(menuOption)
+        orderError=False
+        print("\n")
+        print("{:<5}{:<50}{:>10}{:>10}{:>10}{:>10}".format("#Num","Pizza Flavours","Small","Medium","Large","Monster"))
+        print("="*95)
+        for item in range(len(menu[menuOption-1])):
+                print("{:<5}{:<50}{:>10}{:>10}{:>10}{:>10}".format(
+                str(item+1)+")",
+                menu[menuOption-1][item][0],
+                currency(menu[menuOption-1][item][2]),
+                currency(menu[menuOption-1][item][3]),
+                currency(menu[menuOption-1][item][4]),
+                currency(menu[menuOption-1][item][5])))
+        
+        currentItemTemp=input("\nItem number: ")
+        try:
+                currentItem=int(currentItemTemp)-1
+        except ValueError:
+                orderError="Item not a number"
+        if currentItem < 0:
+                orderError = "Item number less than 1"
+        elif currentItem >= len(menu[menuOption-1]):
+                orderError="Item number higher total items"
+        if orderError != False:
+                print("orderError: {}".format(orderError))
+                order()
+        else:
+                comment=str(input("Enter a comment, type in \"C\" to cancel or leave blank to confirm\n"))
+                if comment.lower() == "c":
+                        print("Cancelling item...")
+                else:
+                        currentItemList =[menuOption-1,currentItem,comment]
+                        customerOrder.append(currentItemList)
+                if 'debug' in globals():
+                        print(customerOrder)
+
+def orderDrinks(menuOption):
+        # Ordering for Drinks onlt, due to it's funky size formatting
+        menuOption=int(menuOption)
+        orderError=False
+        print("\n")
+        print("{:<5}{:<50}{:>10}{:>10}{:>10}".format("#Num","Item Name","Can","Bottle","2Liters"))
+        print("="*85)
+        for item in range(len(menu[menuOption-1])):
+                print("{:<5}{:<50}{:>10}{:>10}{:>10}".format(
+                str(item+1)+")",
+                menu[menuOption-1][item][0],
+                currency(menu[menuOption-1][item][2]),
+                currency(menu[menuOption-1][item][3]),
+                currency(menu[menuOption-1][item][3])))
+        
+        currentItemTemp=input("\nItem number: ")
+        try:
+                currentItem=int(currentItemTemp)-1
+        except ValueError:
+                orderError="Item not a number"
+        if currentItem < 0:
+                orderError = "Item number less than 1"
+        elif currentItem >= len(menu[menuOption-1]):
+                orderError="Item number higher total items"
+        if orderError != False:
+                print("orderError: {}".format(orderError))
+                order()
+        else:
+                comment=str(input("Enter a comment, type in \"C\" to cancel or leave blank to confirm\n"))
+                if comment.lower() == "c":
+                        print("Cancelling item...")
+                else:
+                        currentItemList =[menuOption-1,currentItem,comment]
+                        customerOrder.append(currentItemList)
+                if 'debug' in globals():
+                        print(customerOrder)
 
 #Starts the "start" function and actully  boots the program
 start()
