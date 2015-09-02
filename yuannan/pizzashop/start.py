@@ -4,52 +4,59 @@
 import csv
 import time
 # Predefines
-#debug=True
-cliPrompt=True
+debug=True
 
 # Defining all the functions
 
 def start():
         print("Welcome to Big Rod's Pizza!")
+        import_files()
         if "debug" in globals():
                 dev_menu()
-        import_files()
-        cli()
+        cli(False)
+
+def dev_menu():
+        # Print out the menu in pure python "list" or array form
+        for i in range(0,len(menu)):
+                print("\n")
+                for b in menu[i]:
+                        print(b)
 
 def import_files():
         global menu
+        global customerOrder
         menu = [[],[],[],[],[]]
+        customerOrder = []
         submenus=["starters", "pizzas", "drinks", "desserts", "extras"]
         for i in range(0,len(submenus)):
                 for item in csv.reader(open("etc/"+submenus[i]+".csv")):
                         menu[i].append(item)
 
-def cli():
-        global cliPrompt
-        if cliPrompt:
-                cliPrompt=False
-        else:
+def cli(prompt):
+        if prompt:
                 #allows the user to read the previouse text easier
-                foo=input("\n\n\nPress [ENTER] to return")
-
+                pause=input("\n\n\nPress [ENTER] to return")
+        
         print("\n\n\nWhat would you like to do?\n")
-        print("0) Help with this app")
         print("1) Print Menu")
         print("2) Start Ordering/Change your order")
         print("3) Check Order")
         print("4) Checkout and Print")
         print("5) Check on the meal")
+        print("9) Help with this app")
+        print("0) EXIT")
         menuTemp=input("")
         try:
                 menuOption=int(menuTemp)
         except ValueError:
                 print("Thats's not even a number!")
-                cli()
+                cli(False)
         
         if menuOption in range(0,6):
                 menuOption=str(menuOption)
                 if menuOption == "0":
-                        print_help()
+                        print("Goodbye!")
+                        exit()
                 elif menuOption == "1":
                         print_prompt()
                 elif menuOption == "2":
@@ -60,11 +67,13 @@ def cli():
                         checkout()
                 elif menuOption == "5":
                         checkMeal()
+                elif menuOption == "9":
+                        print_help()
                 else:
                         print("Error, please check the cli menu")
         else:
                 print("There is no option {}...".format(menuOption))
-        cli()
+        cli(False)
 
 def print_help():
         print("\nThis is \"Big Rod's Pizza\" ordering app")
@@ -172,7 +181,7 @@ def currency(money):
         return("£"+whole+"."+units)
 
 def order():
-        print("What would you like to order?")
+        print("\n\n\nWhat would you like to order?")
         print("1) Starters")
         print("2) Pizzas")
         print("3) Drinks")
@@ -182,19 +191,15 @@ def order():
         print("9) Remove an item")
         print("0) Return")
         menuTemp = input("")
-        
-        print(type(menuTemp))
         try:
                 menuOption=int(menuTemp)
         except ValueError:
                 print("That's not even a number!")
                 order()
-        print(type(menuTemp))
-        print(type(menuOption))
-        if menuOption in range(1,5) or menuOption in range(8,10) or menuOption == "0":
+        if menuOption in range(1,5) or menuOption in range(8,10) or menuOption == 0:
                 menuOption=str(menuOption)
                 if menuOption == "0":
-                        cli()
+                        cli(False)
                 elif menuOption == "9":
                         removeItem()
                 elif menuOption == "8":
@@ -211,12 +216,37 @@ def order():
                 print("There is no option {}...".format(menuOption))
         order()
 
-def dev_menu():
-        # Print out the menu in pure python "list" or array form
-        for i in range(0,len(menu)):
-                print("\n")
-                for b in menu[i]:
-                        print(b)
+def orderBasics(menuOption):
+        # Ordering for item that have a set value e.g. Starters, 
+        menuOption=int(menuOption)
+        orderError=False
+        print("\n")
+        for item in range(len(menu[menuOption-1])):
+                formatSpaces=50-len(menu[menuOption-1][item][0])
+                print("{0}){1}{2:50}{3}".format(item+1," "*(3-len(str(item+1))),menu[menuOption-1][item][0],currency(menu[menuOption-1][item][2])))
+        currentItemTemp=input("\nItem number: ")
+        try:
+                currentItem=int(currentItemTemp)-1
+        except ValueError:
+                orderError="Item not a number"
+        if currentItem < 0:
+                orderError = "Item number less than 1"
+        elif currentItem >= len(menu[menuOption]):
+                orderError="Item number higher total items"
+        if orderError != False:
+                print("orderError: {}".format(orderError))
+                order()
+        else:
+                comment=str(input("Enter a comment, type in \"C\" to cancel or leave blank to confirm\n"))
+                if comment.lower() == "c":
+                        print("Cancelling item...")
+                else:
+                        currentItemList =[[menuOption-1],[currentItem],[menu[menuOption-1][currentItem][2]],[comment]]
+                        customerOrder.append(currentItemList)
+                if 'debug' in globals():
+                        print(customerOrder)
+        
+
 
 #Starts the "start" function and actully  boots the program
 start()
