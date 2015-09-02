@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#testing read and write for my stuff
+#testing read and write
 import csv
 starter = open("etc/starters.csv")
 
