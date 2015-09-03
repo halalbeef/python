@@ -1,0 +1,14 @@
+Bugs:
+KEY:
+-CONFIRMED (tested)
+!CONFIRMED (untested or unknown reason)
+?Questionable (May be a feature request, or not confirmed)
+
+        -Currently none (none discovered)
+        -orderError can only support one
+
+
+ToDo:
+        -make "orderError" into:
+                orderError=orderError+{current error}
+        prefferbally in a function so it can support more than one error 
