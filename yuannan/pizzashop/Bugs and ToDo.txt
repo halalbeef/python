@@ -6,6 +6,7 @@ KEY:
 
         -Currently none (none discovered)
         -orderError can only support one
+        -Need to add a presence check, program crashes if some fields left blank
 
 
 ToDo:
