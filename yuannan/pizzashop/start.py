@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 #
-# Importing modules
+# Importing modules and defining essentails
+# V0.0.9 Pre-Alpha, Functional, but missing some parts
 import csv
 import time
-# Predefines
-debug=True
+#debug=True
 
 # Defining all the functions
 
@@ -196,7 +196,7 @@ def order():
         except ValueError:
                 print("That's not even a number!")
                 order()
-        if menuOption in range(1,5) or menuOption in range(8,10) or menuOption == 0:
+        if menuOption in range(1,6) or menuOption in range(8,10) or menuOption == 0:
                 menuOption=str(menuOption)
                 if menuOption == "0":
                         cli(False)
@@ -226,7 +226,9 @@ def orderBasics(menuOption):
         print("{:<5}{:<50}{}".format("#Num","Item Name","Price"))
         print("="*60)
         for item in range(len(menu[menuOption-1])):
-                print("{:<5}{:<50}{}".format(str(item+1)+")",menu[menuOption-1][item][0],currency(menu[menuOption-1][item][2])))
+                print("{:<5}{:<50}{}".format(
+                str(item+1)+")",menu[menuOption-1][item][0],currency(menu[menuOption-1][item][2])))
+        
         currentItemTemp=input("\nItem number: ")
         try:
                 currentItem=int(currentItemTemp)-1
@@ -253,7 +255,7 @@ def orderBasics(menuOption):
                 if comment.lower() == "c":
                         print("Cancelling item...")
                 else:
-                        currentItemList=[amount,menuOption-1,currentItem,comment,currency(menu[menuOption-1][currentItem][2])]
+                        currentItemList=[amount,menuOption-1,currentItem,comment,menu[menuOption-1][currentItem][2]]
                         customerOrder.append(currentItemList)
                 if 'debug' in globals():
                         print(customerOrder)
@@ -297,13 +299,13 @@ def orderPizzas(menuOption):
                 orderError="The size was not a number!"
         if size in range(1,5):
                 if size == 1:
-                        sizeComment="Small\n"
+                        sizeComment="Small"
                 elif size == 2:
-                        sizeComment="Medium\n"
+                        sizeComment="Medium"
                 elif size == 3:
-                        sizeComment="Large\n"
+                        sizeComment="Large"
                 elif size == 4:
-                        sizeComment="Monster\n"
+                        sizeComment="Monster"
                 else:
                         orderError="Critical error in size checking, line ~318"
         else:
@@ -331,7 +333,7 @@ def orderPizzas(menuOption):
                 if comment.lower() == "c":
                         print("Cancelling item...")
                 else:
-                        currentItemList =[amount,menuOption-1,currentItem,sizeComment+comment,currency(menu[menuOption-1][currentItem][size+1])]
+                        currentItemList =[amount,menuOption-1,currentItem,sizeComment+"\n"+comment,menu[menuOption-1][currentItem][size+1]]
                         customerOrder.append(currentItemList)
                 if 'debug' in globals():
                         print(customerOrder)
@@ -373,20 +375,20 @@ def orderDrinks(menuOption):
                 orderError="The size was not a number!"
         if size in range(1,4):
                 if size == 1:
-                        sizeComment="Can\n"
+                        sizeComment="Can"
                 elif size == 2:
-                        sizeComment="Bottle\n"
+                        sizeComment="Bottle"
                 elif size == 3:
-                        sizeComment="2Liters\n"
+                        sizeComment="2Liters"
                 else:
-                        orderError="Critical error in size checking, line ~382"
+                        orderError="Critical error in size checking, line ~381"
         else:
                 if size <= 0:
                         orderError="Size was 0 or smaller"
                 elif size >3:
                         orderError="Size was larger than 3(Maximum size)"
                 else:
-                        orderError="Critical error in size checking, line ~389"
+                        orderError="Critical error in size checking, line ~388"
                 
         amount=input("Amount: ")
         try:
@@ -404,10 +406,27 @@ def orderDrinks(menuOption):
                 if comment.lower() == "c":
                         print("Cancelling item...")
                 else:
-                        currentItemList =[amount,menuOption-1,currentItem,comment,currency(menu[menuOption-1][currentItem][size+1])]
+                        currentItemList =[amount,menuOption-1,currentItem,sizeComment+"\n"+comment,menu[menuOption-1][currentItem][size+1]]
                         customerOrder.append(currentItemList)
                 if 'debug' in globals():
                         print(customerOrder)
+
+def printOrder():
+        if "debug" in globals():
+                print(customerOrder)
+                for i in range(len(customerOrder)):
+                        print(customerOrder[i])
+        
+        for orderedItem in range(len(customerOrder)):
+                print(orderedItem)
+                print("{0}   {1}".format(
+                menu[customerOrder[orderedItem][1]][customerOrder[orderedItem][2]][0], # name
+                customerOrder[orderedItem][3])) # size (built into  the comment)
+                print("{0:<3}X {1:>6}{2:>50}".format(
+                customerOrder[orderedItem][0], # amount of items
+                currency(customerOrder[orderedItem][4]), # Single item cost
+                currency((int(customerOrder[orderedItem][0])*int(customerOrder[orderedItem][4])))
+                ))
 
 #Starts the "start" function and actully  boots the program
 start()
