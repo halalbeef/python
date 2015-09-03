@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 #
+# V0.1.0 Alpha, Functional, but missing some value checking ext.
+# "fully functional"
+#
 # Importing modules and defining essentails
-# V0.0.9 Pre-Alpha, Functional, but missing some parts
 import csv
-import time
+import operator
+from time import gmtime, strftime, sleep
 #debug=True
 
 # Defining all the functions
@@ -42,7 +45,6 @@ def cli(prompt):
         print("2) Start Ordering/Change your order")
         print("3) Check Order")
         print("4) Checkout and Print")
-        print("5) Check on the meal")
         print("9) Help with this app")
         print("0) EXIT")
         menuTemp=input("")
@@ -52,7 +54,7 @@ def cli(prompt):
                 print("Thats's not even a number!")
                 cli(False)
         
-        if menuOption in range(0,6):
+        if menuOption in range(0,5) or menuOption == 9:
                 menuOption=str(menuOption)
                 if menuOption == "0":
                         print("Goodbye!")
@@ -62,11 +64,9 @@ def cli(prompt):
                 elif menuOption == "2":
                         order()
                 elif menuOption == "3":
-                        printOrder()
+                        print_Order(False)
                 elif menuOption == "4":
                         checkout()
-                elif menuOption == "5":
-                        checkMeal()
                 elif menuOption == "9":
                         print_help()
                 else:
@@ -187,7 +187,8 @@ def order():
         print("3) Drinks")
         print("4) Desserts")
         print("5) Extras")
-        print("8) Print menu")
+        print("7) Print menu")
+        print("8) Print current items")
         print("9) Remove an item")
         print("0) Return")
         menuTemp = input("")
@@ -203,7 +204,7 @@ def order():
                 elif menuOption == "9":
                         removeItem()
                 elif menuOption == "8":
-                        print_Order()
+                        print_Order(False)
                 elif menuOption == "7":
                         print_prompt()
                 elif menuOption == "1" or menuOption == "4" or menuOption == "5":
@@ -255,7 +256,7 @@ def orderBasics(menuOption):
                 if comment.lower() == "c":
                         print("Cancelling item...")
                 else:
-                        currentItemList=[amount,menuOption-1,currentItem,comment,menu[menuOption-1][currentItem][2]]
+                        currentItemList=[amount,menuOption-1,currentItem,"\n"+comment,menu[menuOption-1][currentItem][2]]
                         customerOrder.append(currentItemList)
                 if 'debug' in globals():
                         print(customerOrder)
@@ -333,7 +334,10 @@ def orderPizzas(menuOption):
                 if comment.lower() == "c":
                         print("Cancelling item...")
                 else:
-                        currentItemList =[amount,menuOption-1,currentItem,sizeComment+"\n"+comment,menu[menuOption-1][currentItem][size+1]]
+                        if comment == "":
+                                currentItemList =[amount,menuOption-1,currentItem,sizeComment,menu[menuOption-1][currentItem][size+1]]
+                        else:
+                                currentItemList =[amount,menuOption-1,currentItem,sizeComment+"\n"+comment,menu[menuOption-1][currentItem][size+1]]
                         customerOrder.append(currentItemList)
                 if 'debug' in globals():
                         print(customerOrder)
@@ -406,27 +410,108 @@ def orderDrinks(menuOption):
                 if comment.lower() == "c":
                         print("Cancelling item...")
                 else:
-                        currentItemList =[amount,menuOption-1,currentItem,sizeComment+"\n"+comment,menu[menuOption-1][currentItem][size+1]]
+                        if comment == "":
+                                currentItemList =[amount,menuOption-1,currentItem,sizeComment,menu[menuOption-1][currentItem][size+1]]
+                        else:
+                                currentItemList =[amount,menuOption-1,currentItem,sizeComment+"\n"+comment,menu[menuOption-1][currentItem][size+1]]
                         customerOrder.append(currentItemList)
                 if 'debug' in globals():
                         print(customerOrder)
 
-def printOrder():
+def print_Order(numbers):
+        totalCost=0
         if "debug" in globals():
                 print(customerOrder)
                 for i in range(len(customerOrder)):
                         print(customerOrder[i])
         
         for orderedItem in range(len(customerOrder)):
-                print(orderedItem)
-                print("{0}   {1}".format(
-                menu[customerOrder[orderedItem][1]][customerOrder[orderedItem][2]][0], # name
-                customerOrder[orderedItem][3])) # size (built into  the comment)
-                print("{0:<3}X {1:>6}{2:>50}".format(
+                if numbers:
+                        print("{0}) {1}   {2}".format(
+                                orderedItem+1, #Item number for identification
+                                menu[customerOrder[orderedItem][1]][customerOrder[orderedItem][2]][0], # name
+                                customerOrder[orderedItem][3])) # size (built into  the comment)
+                else:
+                        print("{0}   {1}".format(
+                                menu[customerOrder[orderedItem][1]][customerOrder[orderedItem][2]][0],
+                                customerOrder[orderedItem][3]))
+                
+                print("{0:<3}X {1:>5}{2:>50}".format(
                 customerOrder[orderedItem][0], # amount of items
                 currency(customerOrder[orderedItem][4]), # Single item cost
-                currency((int(customerOrder[orderedItem][0])*int(customerOrder[orderedItem][4])))
-                ))
+                currency((int(customerOrder[orderedItem][0])*int(customerOrder[orderedItem][4])))))
+                totalCost+=int(customerOrder[orderedItem][0])*int(customerOrder[orderedItem][4])
+        if numbers:
+                print("Pick an item to remove")
+        else:
+                print("\nTotal:  {}".format(currency(totalCost)))
+
+def removeItem():
+        print_Order(True)
+        itemToRemove=input("Item to remove: ")
+        try:
+                itemToRemove=int(itemToRemove)
+        except ValueError:
+                print("It's not a number!")
+                removeItem()
+        if itemToRemove in range(1,(len(customerOrder)+1)):
+                del customerOrder[itemToRemove-1]
+                print("Item deleted.\nHere is your current order")
+                print_Order(False)
+        else:
+                if itemToRemove <= 0:
+                        print("There is no item 0 or below...")
+                        removeItem()
+                else:
+                        print("There is not item {}, it only goes up to {}!".format(str(itemToRemove),str(len(customerOrder+1))))
+                        removeItem()
+
+def checkout():
+        global checkoutTime
+        checkoutTime=strftime("%H%M%S", gmtime())
+        print("Are you sure you want to place this order? After you do so you cannot change it!")
+        confirm=input("\"Y\" for yes and \"N\" for no\n")
+        if confirm.lower() == "y":
+                sortByIndex(customerOrder,1)
+                print_Order(False)
+                orderToTxt()
+                print("Your order will arive in:")
+                countdown(20*60)
+        elif confirm.lower() == "n":
+                print("Okay.")
+                cli(False)
+        else:
+                print("Sorry \"Y\" or \"N\" only")
+                checkout()
+
+def countdown(t):
+        while t > 0:
+                mins, secs = divmod(t, 60)
+                timeformat = '{:02d}:{:02d}'.format(mins, secs)
+                print(timeformat, end='\r')
+                sleep (1)
+                t -= 1
+        print('Times Up!!!\nYour Delivery should be here now!\nIf not call \"Big Rod\'s Pizza Directly at 999\"')
+
+def orderToTxt():
+        # A modded version of "print order"
+        outputFile=open("orderOutput.txt","w")
+        totalCost=0
+        for orderedItem in range(len(customerOrder)):
+                outputFile.write("\n") # gives a cushion so the outlook is easier it read
+                outputFile.write("{0}   {1}\n".format(
+                menu[customerOrder[orderedItem][1]][customerOrder[orderedItem][2]][0],
+                customerOrder[orderedItem][3]))
+                outputFile.write("{0:<3}X {1:>5}{2:>30}\n".format(
+                customerOrder[orderedItem][0], # amount of items
+                currency(customerOrder[orderedItem][4]), # Single item cost
+                currency((int(customerOrder[orderedItem][0])*int(customerOrder[orderedItem][4])))))
+                totalCost=totalCost+(int(customerOrder[orderedItem][0])*int(customerOrder[orderedItem][4]))
+        outputFile.write("\nTotal:  {}".format(currency(totalCost)))
+        outputFile.close()
+
+def sortByIndex(inputList, index):
+        inputList.sort(key=operator.itemgetter(index))
 
 #Starts the "start" function and actully  boots the program
 start()
