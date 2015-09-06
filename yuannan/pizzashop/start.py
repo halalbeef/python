@@ -435,6 +435,7 @@ def print_Order(numbers):
                 for i in range(len(customerOrder)):
                         print(customerOrder[i])
         
+def print_help():
         for orderedItem in range(len(customerOrder)):
                 if numbers:
                         print("{0}) {1}   {2}".format(
