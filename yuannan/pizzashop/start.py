@@ -6,6 +6,7 @@
 # Importing modules and defining essentails
 import csv
 import operator
+import sys
 from time import gmtime, strftime, sleep
 #debug=True
 
@@ -58,7 +59,7 @@ def cli(prompt):
                 menuOption=str(menuOption)
                 if menuOption == "0":
                         print("Goodbye!")
-                        exit()
+                        sys.exit()
                 elif menuOption == "1":
                         print_prompt()
                 elif menuOption == "2":
@@ -195,8 +196,7 @@ def order():
         try:
                 menuOption=int(menuTemp)
         except ValueError:
-                print("That's not even a number!")
-                order()
+                orderError("That's not even a number!",order,False)
         if menuOption in range(1,6) or menuOption in range(8,10) or menuOption == 0:
                 menuOption=str(menuOption)
                 if menuOption == "0":
@@ -219,10 +219,24 @@ def order():
                 print("There is no option {}...".format(menuOption))
         order()
 
+def orderError(errorName,command,menuOption):
+        print("Error!!!\n"+errorName)
+        if command == "cli":
+                cli(False)
+        elif command == "order":
+                order()
+        elif command == "orderBasics":
+                orderBasics(menuOption)
+        elif command == "orderPizzas":
+                orderPizzas(menuOption)
+        elif command == "orderDrinks":
+                orderDrinks(menuOption)
+        else:
+                cli(False)
+
 def orderBasics(menuOption):
         # Ordering for item that have a set value e.g. Starters, 
         menuOption=int(menuOption)
-        orderError=False
         print("\n")
         print("{:<5}{:<50}{}".format("#Num","Item Name","Price"))
         print("="*60)
@@ -234,27 +248,25 @@ def orderBasics(menuOption):
         try:
                 currentItem=int(currentItemTemp)-1
         except ValueError:
-                orderError="Item not a number"
+                orderError("Item not a number","orderBasics",menuOption)
         if currentItem < 0:
-                orderError = "Item number less than 1"
+                orderError("Item number less than 1",'orderBasics',menuOption)
         elif currentItem >= len(menu[menuOption-1]):
-                orderError="Item number higher total items"
+                orderError("Item number higher total items",'orderBasics',menuOption)
         
         amount=input("Amount: ")
         try:
                 amount=int(amount)
         except ValueError:
-                orderError="Amount of item is not a number!"
+                orderError("Amount of item is not a number!",'orderBasics',menuOption)
         if amount <= 0:
-                orderError="Amount of item is 0 or lower!"
+                orderError("Amount of item is 0 or lower!",'orderBasics',menuOption)
         
-        if orderError != False:
-                print("orderError: {}".format(orderError))
-                order()
         else:
                 comment=str(input("Enter a comment, type in \"C\" to cancel or leave blank to confirm\n"))
                 if comment.lower() == "c":
                         print("Cancelling item...")
+                        orderBasics(menuOption)
                 else:
                         currentItemList=[amount,menuOption-1,currentItem,"\n"+comment,menu[menuOption-1][currentItem][2]]
                         customerOrder.append(currentItemList)
@@ -264,12 +276,11 @@ def orderBasics(menuOption):
 def orderPizzas(menuOption):
         # Ordering for Pizzas only, due to it's funky multi-sized formatting
         menuOption=int(menuOption)
-        orderError=False
         print("\n")
         print(("{:<5}{:<50}"+"{:>10}"*4).format("#Num","Pizza Flavours","Small","Medium","Large","Monster"))
         print("="*95)
         for item in range(len(menu[menuOption-1])):
-                print("{:<5}{:<50}{:>10}{:>10}{:>10}{:>10}".format(
+                print("{:<5}{:<50}"+("{:>10}"*4).format(
                 str(item+1)+")",
                 menu[menuOption-1][item][0],
                 currency(menu[menuOption-1][item][2]),
@@ -281,11 +292,11 @@ def orderPizzas(menuOption):
         try:
                 currentItem=int(currentItemTemp)-1
         except ValueError:
-                orderError="Item not a number"
+                orderError("Item not a number",'orderPizzas',menuOption)
         if currentItem < 0:
-                orderError = "Item number less than 1"
+                orderError("Item number less than 1",'orderPizzas',menuOption)
         elif currentItem >= len(menu[menuOption-1]):
-                orderError="Item number higher total items"
+                orderError("Item number higher total items",'orderPizzas',menuOption)
         
         # Size selection and verification system
         print("What size would you like?")
@@ -297,7 +308,7 @@ def orderPizzas(menuOption):
         try:
                 size=int(size)
         except ValueError:
-                orderError="The size was not a number!"
+                orderError("The size was not a number!",'orderPizzas',menuOption)
         if size in range(1,5):
                 if size == 1:
                         sizeComment="Small"
@@ -308,31 +319,29 @@ def orderPizzas(menuOption):
                 elif size == 4:
                         sizeComment="Monster"
                 else:
-                        orderError="Critical error in size checking, line ~318"
+                        orderError("Critical error in size checking, line ~321",'orderPizzas',menuOption)
         else:
                 if size <= 0:
-                        orderError="Size was 0 or smaller"
+                        orderError("Size was 0 or smaller",'orderPizzas',menuOption)
                 elif size >4:
-                        orderError="Size was larger than 4(Maximum size)"
+                        orderError("Size was larger than 4(Maximum size)",'orderPizzas',menuOption)
                 else:
-                        orderError="Critical error in size checking, line ~315"
+                        orderError("Critical error in size checking, line ~315",'orderPizzas',menuOption)
         
         # Amount selection system
         amount=input("Amount: ")
         try:
                 amount=int(amount)
         except ValueError:
-                orderError="Amount of item is not a number!"
+                orderError("Amount of item is not a number!",'orderPizzas',menuOption)
         if amount <= 0:
-                orderError="Amount of item is 0 or lower!"
-        
-        if orderError != False:
-                print("orderError: {}".format(orderError))
-                order()
+                orderError("Amount of item is 0 or lower!",'orderPizzas',menuOption)
+ 
         else:
                 comment=str(input("Enter a comment, type in \"C\" to cancel or leave blank to confirm\n"))
                 if comment.lower() == "c":
                         print("Cancelling item...")
+                        orderPizzas(menuOption)
                 else:
                         if comment == "":
                                 currentItemList =[amount,menuOption-1,currentItem,sizeComment,menu[menuOption-1][currentItem][size+1]]
@@ -361,11 +370,11 @@ def orderDrinks(menuOption):
         try:
                 currentItem=int(currentItemTemp)-1
         except ValueError:
-                orderError="Item not a number"
+                orderError("Item not a number",'orderDrinks',menuOption)
         if currentItem < 0:
-                orderError = "Item number less than 1"
+                orderError("Item number less than 1",'orderDrinks',menuOption)
         elif currentItem >= len(menu[menuOption-1]):
-                orderError="Item number higher total items"
+                orderError("Item number higher total items",'orderDrinks',menuOption)
                 
         # Size selection and verification system
         print("What size would you like?")
@@ -376,7 +385,7 @@ def orderDrinks(menuOption):
         try:
                 size=int(size)
         except ValueError:
-                orderError="The size was not a number!"
+                orderError("The size was not a number!",'orderDrinks',menuOption)
         if size in range(1,4):
                 if size == 1:
                         sizeComment="Can"
@@ -385,22 +394,22 @@ def orderDrinks(menuOption):
                 elif size == 3:
                         sizeComment="2Liters"
                 else:
-                        orderError="Critical error in size checking, line ~381"
+                        orderError("Critical error in size checking, line ~381",'orderDrinks',menuOption)
         else:
                 if size <= 0:
-                        orderError="Size was 0 or smaller"
+                        orderError("Size was 0 or smaller",'orderDrinks',menuOption)
                 elif size >3:
-                        orderError="Size was larger than 3(Maximum size)"
+                        orderError("Size was larger than 3(Maximum size)",'orderDrinks',menuOption)
                 else:
-                        orderError="Critical error in size checking, line ~388"
+                        orderError("Critical error in size checking, line ~388",'orderDrinks',menuOption)
                 
         amount=input("Amount: ")
         try:
                 amount=int(amount)
         except ValueError:
-                orderError="Amount of item is not a number!"
+                orderError("Amount of item is not a number!",'orderDrinks',menuOption)
         if amount <= 0:
-                orderError="Amount of item is 0 or lower!"
+                orderError("Amount of item is 0 or lower!",'orderDrinks',menuOption)
 
         if orderError != False:
                 print("orderError: {}".format(orderError))
@@ -409,6 +418,7 @@ def orderDrinks(menuOption):
                 comment=str(input("Enter a comment, type in \"C\" to cancel or leave blank to confirm\n"))
                 if comment.lower() == "c":
                         print("Cancelling item...")
+                        orderDrinks(menuOption)
                 else:
                         if comment == "":
                                 currentItemList =[amount,menuOption-1,currentItem,sizeComment,menu[menuOption-1][currentItem][size+1]]
