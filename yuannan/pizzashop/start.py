@@ -238,10 +238,10 @@ def orderBasics(menuOption):
         # Ordering for item that have a set value e.g. Starters, 
         menuOption=int(menuOption)
         print("\n")
-        print("{:<5}{:<50}{}".format("#Num","Item Name","Price"))
+        print("{:<5}{:<30}{:>10}".format("#Num","Item Name","Price"))
         print("="*60)
         for item in range(len(menu[menuOption-1])):
-                print("{:<5}{:<50}{}".format(
+                print("{:<5}{:<30}{:>10}".format(
                 str(item+1)+")",menu[menuOption-1][item][0],currency(menu[menuOption-1][item][2])))
         
         currentItemTemp=input("\nItem number: ")
@@ -277,10 +277,10 @@ def orderPizzas(menuOption):
         # Ordering for Pizzas only, due to it's funky multi-sized formatting
         menuOption=int(menuOption)
         print("\n")
-        print(("{:<5}{:<50}"+"{:>10}"*4).format("#Num","Pizza Flavours","Small","Medium","Large","Monster"))
+        print("{0:<5}{1:<30}{2:>10}{3:>10}{4:>10}{5:>10}".format("#Num","Pizza Flavours","Small","Medium","Large","Monster"))
         print("="*95)
         for item in range(len(menu[menuOption-1])):
-                print("{:<5}{:<50}"+("{:>10}"*4).format(
+                print("{:<5}{:<30}{:>10}{:>10}{:>10}{:>10}".format(
                 str(item+1)+")",
                 menu[menuOption-1][item][0],
                 currency(menu[menuOption-1][item][2]),
@@ -356,10 +356,10 @@ def orderDrinks(menuOption):
         menuOption=int(menuOption)
         orderError=False
         print("\n")
-        print(("{:<5}{:<50}"+("{:>10}")*3).format("#Num","Item Name","Can","Bottle","2Liters"))
+        print("{0:<5}{1:<30}{2:>10}{3:>10}{4:>10}".format("#Num","Item Name","Can","Bottle","2Liters"))
         print("="*85)
         for item in range(len(menu[menuOption-1])):
-                print("{:<5}{:<50}{:>10}{:>10}{:>10}".format(
+                print("{0:<5}{1:<30}{2:>10}{3:>10}{4:>10}".format(
                 str(item+1)+")",
                 menu[menuOption-1][item][0],
                 currency(menu[menuOption-1][item][2]),
@@ -435,7 +435,6 @@ def print_Order(numbers):
                 for i in range(len(customerOrder)):
                         print(customerOrder[i])
         
-def print_help():
         for orderedItem in range(len(customerOrder)):
                 if numbers:
                         print("{0}) {1}   {2}".format(
